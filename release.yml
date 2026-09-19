@@ -1,0 +1,21 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  attach:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set version from tag
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/}"
+          sed -i "s/const CARD_VERSION = \".*\"/const CARD_VERSION = \"${VERSION#v}\"/" dist/confirm-card.js
+
+      - name: Attach file to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/confirm-card.js
